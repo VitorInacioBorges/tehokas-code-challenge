@@ -9,6 +9,8 @@ import ConfirmDeleteDialog from '@/components/confirm-delete-dialog';
 import HealthBadge from '@/components/projects/health-badge';
 import ProjectFormDialog from '@/components/projects/project-form-dialog';
 import KanbanBoard from '@/components/tasks/kanban-board';
+import TaskFilters from '@/components/tasks/task-filters';
+import type { TaskFiltersValue } from '@/components/tasks/task-filters';
 import TaskFormDialog from '@/components/tasks/task-form-dialog';
 import { Button } from '@/components/ui/button';
 import {
@@ -31,6 +33,7 @@ type ProjectBoardProps = {
     tasks: Task[];
     statusOptions: EnumOption<TaskStatusValue>[];
     priorityOptions: EnumOption<TaskPriorityValue>[];
+    filters: TaskFiltersValue;
 };
 
 export default function ProjectBoard({
@@ -38,6 +41,7 @@ export default function ProjectBoard({
     tasks,
     statusOptions,
     priorityOptions,
+    filters,
 }: ProjectBoardProps) {
     const [isTaskFormOpen, setTaskFormOpen] = useState(false);
     const [editingTask, setEditingTask] = useState<Task | undefined>();
@@ -78,7 +82,7 @@ export default function ProjectBoard({
                 { status },
                 {
                     preserveScroll: true,
-                    only: ['project', 'tasks'],
+                    only: ['project', 'tasks', 'filters'],
                     onError: () =>
                         toast.error('Não foi possível mover a tarefa.'),
                     onHttpException: () => {
@@ -102,6 +106,28 @@ export default function ProjectBoard({
         setEditingTask(task);
         setTaskFormOpen(true);
     }
+
+    function applyFilters(next: TaskFiltersValue) {
+        router.get(
+            ProjectController.show.url(project.id, {
+                query: {
+                    status: next.status ?? undefined,
+                    priority: next.priority ?? undefined,
+                },
+            }),
+            {},
+            {
+                preserveState: true,
+                preserveScroll: true,
+                replace: true,
+                only: ['tasks', 'filters'],
+            },
+        );
+    }
+
+    const visibleStatuses = filters.status
+        ? [filters.status]
+        : statusOptions.map((option) => option.value);
 
     return (
         <>
@@ -158,16 +184,27 @@ export default function ProjectBoard({
                     </div>
                 </div>
 
+                <TaskFilters
+                    filters={filters}
+                    statusOptions={statusOptions}
+                    priorityOptions={priorityOptions}
+                    onChange={applyFilters}
+                />
+
                 <KanbanBoard
                     tasks={tasks}
                     statusOptions={statusOptions}
-                    visibleStatuses={statusOptions.map(
-                        (option) => option.value,
-                    )}
+                    visibleStatuses={visibleStatuses}
                     onStatusChange={changeTaskStatus}
                     onEdit={openEditTask}
                     onDelete={setDeletingTask}
                 />
+
+                {tasks.length === 0 && (filters.status || filters.priority) && (
+                    <p className="text-center text-sm text-muted-foreground">
+                        Nenhuma tarefa corresponde aos filtros selecionados.
+                    </p>
+                )}
             </div>
 
             <TaskFormDialog
