@@ -79,6 +79,28 @@ class Task extends Model
     }
 
     /**
+     * Keep only tasks with the given status; a null status keeps every task.
+     *
+     * @param  Builder<Task>  $query
+     */
+    #[Scope]
+    protected function filterByStatus(Builder $query, ?TaskStatus $status): void
+    {
+        $query->when($status, fn (Builder $query) => $query->where('status', $status));
+    }
+
+    /**
+     * Keep only tasks with the given priority; a null priority keeps every task.
+     *
+     * @param  Builder<Task>  $query
+     */
+    #[Scope]
+    protected function filterByPriority(Builder $query, ?TaskPriority $priority): void
+    {
+        $query->when($priority, fn (Builder $query) => $query->where('priority', $priority));
+    }
+
+    /**
      * Determine whether this task is overdue (mirrors the overdue scope).
      *
      * @return Attribute<bool, never>

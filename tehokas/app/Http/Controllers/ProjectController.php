@@ -36,13 +36,25 @@ class ProjectController extends Controller
     {
         Gate::authorize('view', $project);
 
+        $status = $request->enum('status', TaskStatus::class);
+        $priority = $request->enum('priority', TaskPriority::class);
+
         $project->loadCount(Project::taskCountDefinitions());
 
-        $tasks = $project->tasks()->orderBy('deadline')->orderBy('id')->get();
+        $tasks = $project->tasks()
+            ->filterByStatus($status)
+            ->filterByPriority($priority)
+            ->orderBy('deadline')
+            ->orderBy('id')
+            ->get();
 
         return Inertia::render('projects/show', [
             'project' => ProjectResource::make($project)->resolve($request),
             'tasks' => TaskResource::collection($tasks)->resolve($request),
+            'filters' => [
+                'status' => $status?->value,
+                'priority' => $priority?->value,
+            ],
             'statusOptions' => TaskStatus::options(),
             'priorityOptions' => TaskPriority::options(),
         ]);
