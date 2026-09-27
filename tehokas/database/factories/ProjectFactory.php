@@ -20,7 +20,7 @@ class ProjectFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'name' => fake()->catchPhrase(),
+            'name' => fake()->company(),
             'description' => fake()->optional()->sentence(12),
         ];
     }

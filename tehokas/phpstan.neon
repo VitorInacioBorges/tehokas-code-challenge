@@ -21,11 +21,3 @@ parameters:
             message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder(<.*>)?::overdue\(\)\.$#'
             identifier: method.notFound
             path: app/Models/Project.php
-        -
-            # fakerphp/faker's Company provider (which defines catchPhrase()) is registered on
-            # the default Generator at runtime, but the base Generator class's PHPDoc @method
-            # stubs (used by PHPStan/Larastan for static resolution) never list it, so this is a
-            # stub gap in the library rather than a real bug.
-            message: '#^Call to an undefined method Faker\\Generator::catchPhrase\(\)\.$#'
-            identifier: method.notFound
-            path: database/factories/ProjectFactory.php
