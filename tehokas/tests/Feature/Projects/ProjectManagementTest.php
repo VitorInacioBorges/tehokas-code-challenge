@@ -13,7 +13,7 @@ test('a consultant can create a project', function () {
     ]);
 
     $project = Project::query()->sole();
-    $response->assertSessionHasNoErrors()->assertRedirect(route('dashboard'));
+    $response->assertSessionHasNoErrors()->assertRedirect(route('projects.show', $project));
     expect($project->name)->toBe('Implantação de CRM')
         ->and($project->user_id)->toBe($user->id);
 });
