@@ -47,3 +47,12 @@ test('filters do not change the project health, which always considers every tas
             ->where('project.tasks_count', 5)
             ->where('project.health.value', 'alert'));
 });
+
+test('array-shaped filter values are ignored instead of failing', function () {
+    $this->actingAs($this->project->user)
+        ->get(route('projects.show', ['project' => $this->project, 'status' => ['xyz'], 'priority' => ['high']]))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->has('tasks', 3)
+            ->where('filters', ['status' => null, 'priority' => null]));
+});

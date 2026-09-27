@@ -9,6 +9,7 @@ use App\Http\Requests\Projects\UpdateProjectRequest;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\TaskResource;
 use App\Models\Project;
+use BackedEnum;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -36,8 +37,8 @@ class ProjectController extends Controller
     {
         Gate::authorize('view', $project);
 
-        $status = $request->enum('status', TaskStatus::class);
-        $priority = $request->enum('priority', TaskPriority::class);
+        $status = $this->queryEnum($request, 'status', TaskStatus::class);
+        $priority = $this->queryEnum($request, 'priority', TaskPriority::class);
 
         $project->loadCount(Project::taskCountDefinitions());
 
@@ -84,5 +85,20 @@ class ProjectController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Project deleted.')]);
 
         return to_route('dashboard');
+    }
+
+    /**
+     * Read an optional enum filter from the query string, ignoring invalid values and non-string shapes (e.g. status[]=x).
+     *
+     * @template TEnum of \BackedEnum
+     *
+     * @param  class-string<TEnum>  $enumClass
+     * @return TEnum|null
+     */
+    private function queryEnum(Request $request, string $key, string $enumClass): ?BackedEnum
+    {
+        $value = $request->query($key);
+
+        return is_string($value) ? $enumClass::tryFrom($value) : null;
     }
 }
