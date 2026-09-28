@@ -34,6 +34,7 @@ type ProjectBoardProps = {
     statusOptions: EnumOption<TaskStatusValue>[];
     priorityOptions: EnumOption<TaskPriorityValue>[];
     filters: TaskFiltersValue;
+    alertThresholdPercent: number;
 };
 
 export default function ProjectBoard({
@@ -42,6 +43,7 @@ export default function ProjectBoard({
     statusOptions,
     priorityOptions,
     filters,
+    alertThresholdPercent,
 }: ProjectBoardProps) {
     const [isTaskFormOpen, setTaskFormOpen] = useState(false);
     const [editingTask, setEditingTask] = useState<Task | undefined>();
@@ -144,7 +146,7 @@ export default function ProjectBoard({
                         <p className="text-sm text-muted-foreground">
                             {project.tasks_count === 0
                                 ? 'Nenhuma tarefa cadastrada.'
-                                : `${project.overdue_tasks_count} de ${project.tasks_count} tarefas atrasadas (${project.overdue_percentage}%). O projeto entra em alerta acima de 20%.`}
+                                : `${project.overdue_tasks_count} de ${project.tasks_count} tarefas atrasadas (${project.overdue_percentage}%). O projeto entra em alerta acima de ${alertThresholdPercent}%.`}
                         </p>
                         {project.description && (
                             <p className="max-w-2xl text-sm">

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ProjectHealthStatus;
 use App\Enums\TaskPriority;
 use App\Enums\TaskStatus;
 use App\Http\Requests\Projects\StoreProjectRequest;
@@ -58,6 +59,7 @@ class ProjectController extends Controller
             ],
             'statusOptions' => TaskStatus::options(),
             'priorityOptions' => TaskPriority::options(),
+            'alertThresholdPercent' => ProjectHealthStatus::ALERT_THRESHOLD_PERCENT,
         ]);
     }
 

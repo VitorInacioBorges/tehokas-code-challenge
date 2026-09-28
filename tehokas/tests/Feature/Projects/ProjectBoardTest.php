@@ -25,7 +25,8 @@ test('the board shows the project, its health and tasks ordered by deadline', fu
             ->where('tasks.0.status', ['value' => 'pending', 'label' => 'Pendente'])
             ->where('tasks.1.title', 'Depois')
             ->has('statusOptions', 3)
-            ->has('priorityOptions', 3));
+            ->has('priorityOptions', 3)
+            ->where('alertThresholdPercent', 20));
 });
 
 test('the board of another consultant is not found', function () {
