@@ -1,0 +1,39 @@
+# Segredos e estado local — nunca entram na imagem.
+.env
+.env.*
+!.env.example
+database/database.sqlite
+storage/logs/*
+!storage/logs/.gitignore
+
+# Reinstalados dentro da imagem a partir do zero (composer install / npm ci).
+vendor/
+node_modules/
+
+# Gerados pelo build de assets dentro da imagem (estágio "assets").
+public/build
+public/hot
+
+# Metadados de repositório e caches de desenvolvimento.
+.git
+.github
+.gitattributes
+.gitignore
+.phpunit.cache
+.phpunit.result.cache
+docs/
+
+# Suíte de testes: não é necessária para `composer install --no-dev` nem em
+# runtime (autoload-dev com Tests\ não é gerado sem --dev).
+tests/
+
+# Configuração de ferramentas de IA/editor, irrelevante para o build.
+.agents/
+.claude/
+.codex/
+.cursor/
+.idea/
+.vscode/
+.mcp.json
+boost.json
+AGENTS.md

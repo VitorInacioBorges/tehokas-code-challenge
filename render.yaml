@@ -1,0 +1,54 @@
+# Blueprint do Render (https://render.com/docs/blueprint-spec).
+# Plano free: hiberna sem tráfego, disco efêmero (sem persistência) — o
+# SQLite é recriado e semeado a cada boot por tehokas/docker/start.sh.
+# Deploy automático a cada commit em `main` (o usuário mescla develop -> main
+# manualmente; o Render dispara o build a partir daí).
+#
+# Sem `rootDir`: a doc de blueprint-spec diz que dockerfilePath/dockerContext
+# são relativos à raiz do repo, mas a doc de monorepo-support manda torná-los
+# relativos ao rootDir quando ele é definido — as duas são contraditórias.
+# Deixando `rootDir` de fora, essa ambiguidade não existe: os caminhos abaixo
+# valem sob as duas leituras. `buildFilter.paths` substitui o papel que
+# `rootDir` teria de evitar rebuild em commits que só tocam a raiz do repo
+# (ex.: só os arquivos em `.superpowers/`); build filter paths são sempre
+# relativos à raiz do repo, então "tehokas/**" está correto aqui.
+services:
+  - name: checklist-projetos
+    type: web
+    runtime: docker
+    plan: free
+    dockerfilePath: ./tehokas/Dockerfile
+    dockerContext: ./tehokas
+    buildFilter:
+      paths:
+        - tehokas/**
+    branch: main
+    autoDeployTrigger: commit
+    healthCheckPath: /up
+    envVars:
+      - key: APP_NAME
+        value: "Checklist de Projetos"
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_LOCALE
+        value: pt_BR
+      - key: APP_FALLBACK_LOCALE
+        value: en
+      - key: APP_TIMEZONE
+        value: America/Sao_Paulo
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: DB_CONNECTION
+        value: sqlite
+      - key: SESSION_DRIVER
+        value: database
+      - key: CACHE_STORE
+        value: database
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: MAIL_MAILER
+        value: log
