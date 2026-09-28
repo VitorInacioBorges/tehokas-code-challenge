@@ -95,7 +95,7 @@ The domain has two tables, linked by a foreign key with cascading deletes:
 
 | Table | Main columns | Notes |
 |---|---|---|
-| `projects` | `id`, `user_id`, `name`, `description` | `user_id` points to the owning consultant; deleting the consultant (not exposed in the UI) cascades to their projects. |
+| `projects` | `id`, `user_id`, `name`, `description` | `user_id` points to the owning consultant; deleting the consultant — under Settings > Profile, "Delete account" (`<DeleteUser />`) — cascades to their projects. |
 | `tasks` | `id`, `project_id`, `title`, `description`, `status`, `priority`, `deadline` | `status` and `priority` are string-backed enums; `deadline` is a `dateTime` (date and time); deleting the project cascades to its tasks. |
 
 The domain's three enums live in `app/Enums`:
@@ -118,9 +118,11 @@ every read, from two counts aggregated in a single SQL query.
 1. **`Task::overdue()`** (local scope in `app/Models/Task.php`) is the single
    definition of an "overdue task" in the whole system: a `deadline` in the
    past **and** a `status` other than `Completed`. Every rule that depends on
-   being overdue — the Health Indicator, a task's `is_overdue` field — goes
-   through this scope, so fixing the rule in one place fixes it everywhere
-   else.
+   being overdue uses this same definition: the Health Indicator queries the
+   scope directly; a task's `is_overdue` field is an accessor
+   (`isOverdue()`, in `app/Models/Task.php`) that repeats the same rule in
+   PHP, without depending on a query — fixing the rule requires updating
+   both places.
 2. **`Project::withTaskCounts()`** (local scope in `app/Models/Project.php`)
    uses `withCount()` to fetch, in a single query, the project's total task
    count, how many are overdue (reusing `overdue()`), and how many are
