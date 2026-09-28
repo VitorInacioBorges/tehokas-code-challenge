@@ -3,14 +3,25 @@
 # SQLite é recriado e semeado a cada boot por tehokas/docker/start.sh.
 # Deploy automático a cada commit em `main` (o usuário mescla develop -> main
 # manualmente; o Render dispara o build a partir daí).
+#
+# Sem `rootDir`: a doc de blueprint-spec diz que dockerfilePath/dockerContext
+# são relativos à raiz do repo, mas a doc de monorepo-support manda torná-los
+# relativos ao rootDir quando ele é definido — as duas são contraditórias.
+# Deixando `rootDir` de fora, essa ambiguidade não existe: os caminhos abaixo
+# valem sob as duas leituras. `buildFilter.paths` substitui o papel que
+# `rootDir` teria de evitar rebuild em commits que só tocam a raiz do repo
+# (ex.: só os arquivos em `.superpowers/`); build filter paths são sempre
+# relativos à raiz do repo, então "tehokas/**" está correto aqui.
 services:
   - name: checklist-projetos
     type: web
     runtime: docker
     plan: free
-    rootDir: tehokas
-    dockerfilePath: tehokas/Dockerfile
-    dockerContext: tehokas
+    dockerfilePath: ./tehokas/Dockerfile
+    dockerContext: ./tehokas
+    buildFilter:
+      paths:
+        - tehokas/**
     branch: main
     autoDeployTrigger: commit
     healthCheckPath: /up
