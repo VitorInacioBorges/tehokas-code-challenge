@@ -11,3 +11,13 @@ parameters:
         - routes/
 
     level: 7
+
+    ignoreErrors:
+        -
+            # Larastan cannot resolve the `overdue()` scope's #[Scope] attribute when it is
+            # called on a `Builder<Task>` inside a closure passed to `withCount()`. Duplicating
+            # the overdue condition here instead would create two sources of truth for the
+            # "overdue" rule, so the call is kept and the false positive is ignored instead.
+            message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder(<.*>)?::overdue\(\)\.$#'
+            identifier: method.notFound
+            path: app/Models/Project.php
