@@ -64,11 +64,19 @@ RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framewor
     && chown -R www-data:www-data storage bootstrap/cache database \
     && chown -R www-data:www-data /data/caddy /config/caddy
 
+# O binário oficial do FrankenPHP vem com a file capability
+# cap_net_bind_service (para escutar em portas < 1024). Rodando como www-data
+# numa plataforma que não concede essa capability (caso do Render), o kernel
+# recusa executar o binário ("Operation not permitted", status 126). O servidor
+# escuta em $PORT (10000 no Render), então a capability é desnecessária:
+# removê-la é a receita oficial para rodar sem root em porta alta.
+RUN setcap -r /usr/local/bin/frankenphp
+
 COPY docker/start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 
 USER www-data
 
-EXPOSE 8080
+EXPOSE 10000
 
 ENTRYPOINT ["/usr/local/bin/start.sh"]
