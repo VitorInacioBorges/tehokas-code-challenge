@@ -33,6 +33,6 @@ php artisan optimize
 
 # O FrankenPHP lê SERVER_NAME do Caddyfile padrão da imagem; ":$PORT" faz o
 # Caddy escutar em todas as interfaces na porta que o Render atribuiu.
-export SERVER_NAME=":${PORT:-8080}"
+export SERVER_NAME=":${PORT:-10000}"
 
 exec frankenphp run --config /etc/frankenphp/Caddyfile --adapter caddyfile
