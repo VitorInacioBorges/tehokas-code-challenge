@@ -2,6 +2,8 @@
 
 MVP para consultores criarem projetos, gerenciarem as respectivas tarefas num quadro Kanban e acompanharem o **Indicador de Saúde** de cada projeto — um sinal simples de quantas tarefas estão atrasadas, calculado em tempo real a cada visita ao dashboard ou ao Kanban.
 
+Disponível em: https://checklist-projetos.onrender.com/dashboard
+
 ## Sumário
 
 - [Funcionalidades](#funcionalidades)
