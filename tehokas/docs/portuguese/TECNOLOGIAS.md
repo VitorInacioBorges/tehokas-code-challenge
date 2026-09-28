@@ -10,7 +10,7 @@ momento em que este documento foi escrito (`composer show --direct` e os
 | Tecnologia | Versão exigida | Versão instalada | Por que foi usada |
 |---|---|---|---|
 | **Laravel** | `^13.17` | 13.33.0 | Framework do backend: roteamento, validação, autorização (Policies), Eloquent ORM, filas, testes. |
-| **PHP** | `^8.3` | 8.5.4 | Linguagem do backend. O projeto usa recursos recentes da linguagem, como os atributos `#[Scope]` e `#[Fillable]` do Eloquent. |
+| **PHP** | `^8.4.1` | 8.5.4 | Linguagem do backend. O projeto usa recursos recentes da linguagem, como os atributos `#[Scope]` e `#[Fillable]` do Eloquent. |
 | **Inertia.js (adapter Laravel)** | `^3.0` (`inertiajs/inertia-laravel`) | 3.4.0 | Ponte entre Laravel e React sem expor uma API REST separada: o controller devolve `Inertia::render()` com as props já tipadas, sem duplicar contrato entre backend e frontend. |
 | **Laravel Fortify** | `^1.37.2` | 1.40.0 | Backend de autenticação, agnóstico de frontend: login, cadastro, 2FA (TOTP com QR code e códigos de recuperação), confirmação de senha e passkeys, sem precisar reimplementar esses fluxos. |
 | **Laravel Wayfinder** | `^0.1.14` | 0.1.21 | Gera funções TypeScript tipadas a partir das rotas e controllers PHP (`resources/js/actions`, `resources/js/routes`), para o frontend chamar o backend sem strings de URL escritas à mão nem contrato duplicado. |

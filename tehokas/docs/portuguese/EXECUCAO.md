@@ -6,8 +6,8 @@ pasta `tehokas/` (a raiz da aplicação Laravel).
 
 ## Pré-requisitos
 
-- **PHP 8.3 ou superior** (o projeto foi desenvolvido e testado com PHP 8.5) e
-  Composer.
+- **PHP 8.4.1 ou superior** (o projeto foi desenvolvido e testado com PHP 8.5)
+  e Composer.
 - **Node 22 ou superior** e npm.
 - Extensão `pdo_sqlite` habilitada no PHP — o banco padrão é SQLite.
 - Docker, apenas se você optar pelo caminho do Sail em vez da instalação
@@ -52,11 +52,16 @@ O repositório já inclui `tehokas/compose.yaml`, gerado pelo Sail
 `laravel.test` — sem serviços extras, porque o projeto usa SQLite em vez de um
 banco cliente-servidor.
 
-1. Entre na pasta da aplicação e copie o `.env`:
+1. Entre na pasta da aplicação, copie o `.env` e defina `APP_PORT=8000`
+   (`compose.yaml` publica a porta `${APP_PORT:-80}`, mas o `.env.example`
+   traz `APP_URL=http://localhost:8000`; sem essa variável a porta publicada
+   não bate com a `APP_URL`, e os passkeys/WebAuthn exigem que a origem do
+   navegador corresponda exatamente a ela):
 
    ```bash
    cd tehokas-code-challenge/tehokas
    cp .env.example .env
+   echo "APP_PORT=8000" >> .env
    ```
 
 2. Instale as dependências PHP sem precisar de PHP/Composer localmente,
@@ -88,8 +93,15 @@ máquina com Docker disponível** no momento em que este projeto foi preparado.
 
 ## Dados de demonstração
 
-Depois de rodar o seeder (`php artisan db:seed`, incluído em `composer setup`
-e no fluxo do Sail acima), use:
+O `composer setup` só instala dependências, cria o `.env`, gera a `APP_KEY` e
+roda as migrations — ele **não** semeia o banco. Rode `php artisan db:seed`
+separadamente, uma vez, logo depois (o fluxo do Sail acima já roda o seed
+como parte do `migrate --seed`). Rodar o seed duas vezes no mesmo banco
+falha, porque o e-mail do usuário de demonstração já existe; para recomeçar
+do zero, use `php artisan migrate:fresh --seed` (isso apaga os dados
+locais).
+
+Depois de semear, use:
 
 - **E-mail:** `consultor@tehokas.test`
 - **Senha:** `password`

@@ -11,7 +11,7 @@ behind each choice.
 | Technology | Required version | Installed version | Why it was used |
 |---|---|---|---|
 | **Laravel** | `^13.17` | 13.33.0 | The backend framework: routing, validation, authorization (Policies), the Eloquent ORM, queues, testing. |
-| **PHP** | `^8.3` | 8.5.4 | The backend language. The project uses recent language features, such as Eloquent's `#[Scope]` and `#[Fillable]` attributes. |
+| **PHP** | `^8.4.1` | 8.5.4 | The backend language. The project uses recent language features, such as Eloquent's `#[Scope]` and `#[Fillable]` attributes. |
 | **Inertia.js (Laravel adapter)** | `^3.0` (`inertiajs/inertia-laravel`) | 3.4.0 | The bridge between Laravel and React without exposing a separate REST API: the controller returns `Inertia::render()` with already-typed props, without duplicating a contract between backend and frontend. |
 | **Laravel Fortify** | `^1.37.2` | 1.40.0 | Frontend-agnostic authentication backend: login, registration, 2FA (TOTP with QR code and recovery codes), password confirmation, and passkeys, without reimplementing those flows from scratch. |
 | **Laravel Wayfinder** | `^0.1.14` | 0.1.21 | Generates typed TypeScript functions from the PHP routes and controllers (`resources/js/actions`, `resources/js/routes`), so the frontend can call the backend without hand-written URL strings or a duplicated contract. |

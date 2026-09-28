@@ -72,7 +72,7 @@ O projeto usa o **starter kit oficial de React** do Laravel, que nas versões at
 
 ## Como rodar localmente
 
-Requisitos: PHP 8.3+, Composer e Node 22+.
+Requisitos: PHP 8.4.1+ (desenvolvido com PHP 8.5), Composer e Node 22+.
 
 ```bash
 git clone git@github.com:VitorInacioBorges/tehokas-code-challenge.git
@@ -89,6 +89,7 @@ O repositório já inclui o `compose.yaml` gerado pelo Sail (`php artisan sail:i
 ```bash
 cd tehokas-code-challenge/tehokas
 cp .env.example .env
+echo "APP_PORT=8000" >> .env
 docker run --rm -u "$(id -u):$(id -g)" -v "$(pwd):/var/www/html" -w /var/www/html laravelsail/php84-composer:latest composer install --ignore-platform-reqs
 ./vendor/bin/sail up -d
 ./vendor/bin/sail artisan key:generate
@@ -98,11 +99,20 @@ docker run --rm -u "$(id -u):$(id -g)" -v "$(pwd):/var/www/html" -w /var/www/htm
 
 > **Nota:** a imagem `laravelsail/php84-composer` é usada para instalar as dependências PHP sem precisar de PHP/Composer localmente — no momento em que este README foi escrito, o Sail ainda não publicou uma imagem `php85-composer`, então a imagem de PHP 8.4 (a mais recente disponível) é usada só para esse passo; o container da aplicação em si (`laravel.test`) já roda PHP 8.5, conforme `compose.yaml`.
 >
+> **Nota sobre a porta:** `compose.yaml` publica a porta `${APP_PORT:-80}`, mas o `.env.example` traz `APP_URL=http://localhost:8000`. Defina `APP_PORT=8000` no `.env` antes do `sail up` (como no comando `echo` acima) para que a porta publicada bata com a `APP_URL` — os passkeys (WebAuthn) exigem que a origem do navegador corresponda exatamente à `APP_URL`.
+>
 > Docker não estava disponível no ambiente em que este README e o `compose.yaml` foram preparados, então o fluxo do Sail acima **não foi validado localmente** — apenas gerado e revisado. Ao rodar em uma máquina com Docker, `./vendor/bin/sail up -d` seguido de `./vendor/bin/sail artisan migrate --seed` deve ser suficiente para validar.
 
 ## Acesso de demonstração
 
-Após rodar o seeder (`php artisan db:seed`, incluso em `composer setup` e no fluxo do Sail acima):
+O `composer setup` só instala dependências, cria o `.env`, gera a `APP_KEY` e
+roda as migrations — ele **não** semeia o banco. Rode `php artisan db:seed`
+separadamente, uma vez, logo depois. Rodar o seed duas vezes no mesmo banco
+falha, porque o e-mail do usuário de demonstração já existe; para recomeçar
+do zero, use `php artisan migrate:fresh --seed` (isso apaga os dados
+locais).
+
+Depois de semear:
 
 - **E-mail:** `consultor@tehokas.test`
 - **Senha:** `password`

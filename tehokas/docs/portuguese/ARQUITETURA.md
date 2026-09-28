@@ -98,7 +98,7 @@ cascata:
 
 | Tabela | Colunas principais | Observações |
 |---|---|---|
-| `projects` | `id`, `user_id`, `name`, `description` | `user_id` aponta para o consultor dono; ao excluir o consultor (não exposto na UI), os projetos são excluídos em cascata. |
+| `projects` | `id`, `user_id`, `name`, `description` | `user_id` aponta para o consultor dono; ao excluir o consultor — em Configurações > Perfil, "Excluir conta" (`<DeleteUser />`) —, os projetos são excluídos em cascata. |
 | `tasks` | `id`, `project_id`, `title`, `description`, `status`, `priority`, `deadline` | `status` e `priority` são enums de string; `deadline` é `dateTime` (data e hora); ao excluir o projeto, as tarefas são excluídas em cascata. |
 
 Os três enums do domínio vivem em `app/Enums`:
@@ -122,9 +122,12 @@ leitura, a partir de duas contagens agregadas em uma única consulta SQL.
 
 1. **`Task::overdue()`** (local scope em `app/Models/Task.php`) é a única
    definição de "tarefa atrasada" em todo o sistema: `deadline` no passado
-   **e** `status` diferente de `Completed`. Toda regra que depende de atraso —
-   o Indicador de Saúde, o campo `is_overdue` de uma tarefa — passa por este
-   scope, então corrigir a regra num só lugar corrige todo o resto.
+   **e** `status` diferente de `Completed`. Toda regra que depende de atraso
+   usa esta mesma definição: o Indicador de Saúde consulta o scope
+   diretamente; o campo `is_overdue` de uma tarefa é um accessor
+   (`isOverdue()`, em `app/Models/Task.php`) que repete a mesma regra em PHP,
+   sem depender de uma query — corrigir a regra exige atualizar os dois
+   lugares.
 2. **`Project::withTaskCounts()`** (local scope em `app/Models/Project.php`)
    usa `withCount()` para trazer, numa única query, o total de tarefas do
    projeto, quantas estão atrasadas (reutilizando `overdue()`) e quantas estão
